@@ -5,10 +5,13 @@
 int main(int argc, char **argv)
 {
 	FILE *bytecode_file;
-	char bytecode[LINE];
+	char *bytecode;
 	char *filename;
 	int nline;
-	
+	size_t line_s;
+
+	bytecode = NULL;
+	line_s = 0;
 	nline = 1;
 	if (argc != 2)
 	{
@@ -26,11 +29,13 @@ int main(int argc, char **argv)
 	}
 	
 	/* read bytecode while there still data to read */
-	while (fgets(bytecode, LINE, bytecode_file))
+	while (getline(&bytecode, &line_s, bytecode_file) != -1)
 	{
 		validate_bytecode(bytecode, nline);
 		++nline;
-	}	
-	
-	return (0);
+	}
+
+	free(bytecode);
+ 	fclose(bytecode_file);	
+	exit(EXIT_SUCCESS);
 }

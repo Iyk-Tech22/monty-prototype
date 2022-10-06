@@ -44,6 +44,12 @@ void validate_bytecode(char *bytecode, unsigned int nline)
 			oparg.store = n;
 			ex_opcode(token1, nline);
 		}
+		else
+		{
+			fprintf(stderr,"L%d: unknown instruction %s\n", nline, token1);
+			exit(EXIT_FAILURE);
+		} 
 	}
-	exit(0);
+	
+	return;
 }
