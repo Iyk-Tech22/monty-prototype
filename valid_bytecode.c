@@ -1,7 +1,4 @@
 #include "monty.h"
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
 
 /**
  * validate_bytecode - Takes a bytecode and check if it valid
@@ -10,14 +7,14 @@
  * @oparg: a pointer to a int oparg value
  * Return: 0 if not valid, 1 if valid
  */
-int validate_bytecode(char *bytecode, char **opcode, long *oparg)
+void validate_bytecode(char *bytecode, unsigned int nline)
 {
 	char *token1;
 	char *token2;
 	char *token3;
 	char delim[] = " ";
-	long oparg_int;
 	char *opargerr;
+	long n;
 
 
 	/* tokenize byte code into token */
@@ -28,38 +25,25 @@ int validate_bytecode(char *bytecode, char **opcode, long *oparg)
 		token2 = strtok(NULL, delim);
 		token3 = strtok(NULL, delim);
 	}
-	
-	/* parse token */
+	else
+		exit(0);
 
-	/* push opcode */
+	/* parse token */
 	if (strcmp(token1, "push") == 0)
 	{
 		if (token3 == NULL)
 		{
 			errno = 0;
-			oparg_int = strtol(token2, &opargerr, 10);
+			n = strtol(token2, &opargerr, 10);
 			if (errno != 0)
 			{
-				*opcode = token1;
-				*oparg = -1;
-				return (0);
+				fprintf(stderr,"L%d: usage: push integer\n", nline);
+				exit(EXIT_FAILURE);
 			}
-			*opcode = token1;
-			*oparg = oparg_int;
-			return (1);
-		}
-		else
-		{
-			*opcode = token1;
-			*oparg = -1;
-			return (0);
+			/* execute instruction */
+			oparg.store = n;
+			ex_opcode(token1, nline);
 		}
 	}
-	else
-	{
-		*opcode = token1;
-		*oparg = -1;
-		return (0);
-	}
+	exit(0);
 }
-
